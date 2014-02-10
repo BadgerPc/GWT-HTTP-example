@@ -11,7 +11,7 @@ public class TestLocalhost extends TestTemplate {
 
   public TestLocalhost() {
 
-    String url = "http://localhost/data/waves.json";
+    String url = "http://localhost/wmt/app/data/waves.json";
     DataTransfer.get(this, url);
 
     header.setHTML(header.getHTML() + "Localhost");

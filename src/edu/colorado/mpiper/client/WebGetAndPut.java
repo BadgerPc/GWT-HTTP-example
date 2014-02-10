@@ -22,6 +22,7 @@ public class WebGetAndPut implements EntryPoint {
     
     // The tests.
     contents.add(new TestLocalhost());
-    contents.add(new TestGetModelRiver());    
+    contents.add(new TestGetModelRiver());  
+    contents.add(new TestPostModelRiver());
   }
 }

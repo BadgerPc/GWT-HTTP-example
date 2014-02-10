@@ -1,5 +1,6 @@
 package edu.colorado.mpiper.client;
 
+import com.google.debugging.sourcemap.dev.protobuf.AbstractMessage.Builder;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -13,6 +14,12 @@ public class DataTransfer {
 
   private static final String CXN_MSG = "Couldn't connect to server";
 
+  /**
+   * Performs a GET operation with the given URL.
+   * 
+   * @param tester
+   * @param url
+   */
   public static void get(final TestTemplate tester, final String url) {
 
     RequestBuilder builder =
@@ -40,6 +47,55 @@ public class DataTransfer {
         }
       });
 
+    } catch (RequestException e) {
+      Window.alert(CXN_MSG);
+    }
+  }
+
+  /**
+   * Performs a POST operation with the given URL.
+   * 
+   * @param tester
+   * @param url
+   */
+  public static void post(final TestTemplate tester, final String url) {
+
+    RequestBuilder builder =
+        new RequestBuilder(RequestBuilder.POST, URL.encode(url));
+    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+    GWT.log(url);
+
+    final String modelName = tester.modelName;
+    final String modelJSON = tester.modelJSON;
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("name=" + modelName);
+    sb.append("json=" + modelJSON);
+    GWT.log(sb.toString());
+    
+    try {
+      @SuppressWarnings("unused")
+      Request request =
+          builder.sendRequest(sb.toString(), new RequestCallback() {
+
+            @Override
+            public void onResponseReceived(Request request, Response response) {
+              if (Response.SC_OK == response.getStatusCode()) {
+                String rtxt = response.getText();
+                //tester.setResponse(rtxt);
+                Window.alert(rtxt);
+              } else {
+                String msg = "The URL " + url + " cannot be accessed.";
+                Window.alert(msg);
+              }
+            }
+
+            @Override
+            public void onError(Request request, Throwable exception) {
+              Window.alert(CXN_MSG);
+            }
+          });
+      
     } catch (RequestException e) {
       Window.alert(CXN_MSG);
     }

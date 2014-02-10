@@ -11,10 +11,11 @@ public class TestGetModelRiver extends TestTemplate {
 
   public TestGetModelRiver() {
 
+    // Models are accessed by index -- here, 18.
     String url = "http://csdms.colorado.edu/wmt/models/open/18";
     DataTransfer.get(this, url);
 
-    header.setHTML(header.getHTML() + "Get model from river");
+    header.setHTML(header.getHTML() + "GET model from river");
     grid.setWidget(0, 1, new HTML(url));
     grid.setWidget(1, 1, new HTML());
   }

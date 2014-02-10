@@ -1,19 +1,21 @@
 package edu.colorado.mpiper.client;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * A template for all tests.
+ * A template for all GWT HTTP tests.
  * 
  * @author Mark Piper (mark.piper@colorado.edu)
  */
 public class TestTemplate extends VerticalPanel {
 
   protected HTML header;
-  protected Grid grid;
+  protected FlexTable grid;
+  protected String modelName;
+  protected String modelJSON;
   
   public TestTemplate() {
     
@@ -21,7 +23,6 @@ public class TestTemplate extends VerticalPanel {
     header.getElement().getStyle().setFontSize(150, Unit.PCT);
     header.getElement().getStyle().setMarginBottom(5, Unit.PX);
     
-    grid = new Grid(2, 2);
     grid.setWidget(0, 0, new HTML("<b>Call:</b>"));
     grid.setWidget(1, 0, new HTML("<b>Response:</b>"));
     
