@@ -11,8 +11,10 @@ public class TestPostModelRiver extends TestTemplate {
 
   public TestPostModelRiver() {
 
+    Integer r = (int) (Math.random() * 100);
+    
     modelName = "GWT POST Test";
-    modelJSON = "{\"model\":42}";
+    modelJSON = "{\"model\":" + r.toString() + "}";
     
     String url = "https://csdms.colorado.edu/wmt/models/new";
     DataTransfer.post(this, url);

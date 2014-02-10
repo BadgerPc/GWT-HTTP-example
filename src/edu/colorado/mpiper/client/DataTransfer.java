@@ -1,6 +1,8 @@
 package edu.colorado.mpiper.client;
 
-import com.google.debugging.sourcemap.dev.protobuf.AbstractMessage.Builder;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -36,7 +38,9 @@ public class DataTransfer {
             String rtxt = response.getText();
             tester.setResponse(rtxt);
           } else {
-            String msg = "The URL " + url + " cannot be accessed.";
+            String msg =
+                "The URL '" + url + "' cannot be accessed. "
+                    + "Response code: " + response.getStatusCode();
             Window.alert(msg);
           }
         }
@@ -48,7 +52,7 @@ public class DataTransfer {
       });
 
     } catch (RequestException e) {
-      Window.alert(CXN_MSG);
+      Window.alert("Failed to send the request: " + e.getMessage());
     }
   }
 
@@ -58,34 +62,33 @@ public class DataTransfer {
    * @param tester
    * @param url
    */
+  @SuppressWarnings("unused")
   public static void post(final TestTemplate tester, final String url) {
 
     RequestBuilder builder =
         new RequestBuilder(RequestBuilder.POST, URL.encode(url));
-    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
     GWT.log(url);
 
-    final String modelName = tester.modelName;
-    final String modelJSON = tester.modelJSON;
+    String queryString = buildQueryString(tester.makeEntries());
+    GWT.log(queryString);
 
-    StringBuilder sb = new StringBuilder();
-    sb.append("name=" + modelName);
-    sb.append("json=" + modelJSON);
-    GWT.log(sb.toString());
-    
     try {
-      @SuppressWarnings("unused")
+      builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
+      //builder.setHeader("Content-Type", "application/json");
       Request request =
-          builder.sendRequest(sb.toString(), new RequestCallback() {
+          builder.sendRequest(queryString, new RequestCallback() {
 
             @Override
             public void onResponseReceived(Request request, Response response) {
+
               if (Response.SC_OK == response.getStatusCode()) {
                 String rtxt = response.getText();
-                //tester.setResponse(rtxt);
+                // tester.setResponse(rtxt);
                 Window.alert(rtxt);
               } else {
-                String msg = "The URL " + url + " cannot be accessed.";
+                String msg =
+                    "The URL '" + url + "' cannot be accessed. "
+                        + "Response code: " + response.getStatusCode();
                 Window.alert(msg);
               }
             }
@@ -95,12 +98,42 @@ public class DataTransfer {
               Window.alert(CXN_MSG);
             }
           });
-      
+
     } catch (RequestException e) {
-      Window.alert(CXN_MSG);
+      Window.alert("Failed to send the request: " + e.getMessage());
     }
   }
 
+  /**
+   * Builds a HTTP query string from a HashMap of entries.
+   * 
+   * @param entries a HashMap of key-value pairs
+   * @return the query, as a String
+   */
+  public static String buildQueryString(HashMap<String, String> entries) {
+
+    StringBuilder sb = new StringBuilder();
+
+    Integer entryCount = 0;
+    for (Entry<String, String> entry : entries.entrySet()) {
+
+      if (entryCount > 0) {
+        sb.append("&");
+      }
+
+      String encodedName = URL.encodeQueryString(entry.getKey());
+      sb.append(encodedName);
+      sb.append("=");
+      String encodedValue = URL.encodeQueryString(entry.getValue());
+      sb.append(encodedValue);
+
+      entryCount++;
+    }
+
+    return sb.toString();
+  }
+  
+  
   /**
    * A JSNI method for creating a String from a JavaScriptObject.
    * 
