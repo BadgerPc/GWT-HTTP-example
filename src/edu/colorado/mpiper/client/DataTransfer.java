@@ -36,7 +36,7 @@ public class DataTransfer {
 
     try {
       Request request =
-          builder.sendRequest(null, new GetModelRequestCallback());
+          builder.sendRequest(null, new ModelRequestCallback());
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
@@ -62,14 +62,14 @@ public class DataTransfer {
       builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
       // builder.setHeader("Content-Type", "application/json");
       Request request =
-          builder.sendRequest(queryString, new PostModelRequestCallback());
+          builder.sendRequest(queryString, new ModelRequestCallback());
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
   }
 
   /**
-   * Builds a HTTP query string from a HashMap of entries.
+   * Builds a HTTP query string from a HashMap of key-value entries.
    * 
    * @param entries a HashMap of key-value pairs
    * @return the query, as a String
@@ -98,39 +98,16 @@ public class DataTransfer {
   }
 
   /**
-   * Provides the callback for a GET request of a model.
+   * A RequestCallback handler class that provides the callback for a GET or
+   * POST request of a model.
    */
-  public static class GetModelRequestCallback implements RequestCallback {
+  public static class ModelRequestCallback implements RequestCallback {
 
     @Override
     public void onResponseReceived(Request request, Response response) {
       if (Response.SC_OK == response.getStatusCode()) {
         String rtxt = response.getText();
         tester.setResponse(rtxt);
-      } else {
-        String msg =
-            "The URL '" + url + "' did not give an 'OK' response. "
-                + "Response code: " + response.getStatusCode();
-        Window.alert(msg);
-      }
-    }
-
-    @Override
-    public void onError(Request request, Throwable exception) {
-      Window.alert(ERR_MSG + exception.getMessage());
-    }
-  }
-
-  /**
-   * Provides the callback for a POST request of a model.
-   */
-  public static class PostModelRequestCallback implements RequestCallback {
-
-    @Override
-    public void onResponseReceived(Request request, Response response) {
-      if (Response.SC_OK == response.getStatusCode()) {
-        String rtxt = response.getText();
-        // tester.setResponse(rtxt);
         Window.alert(rtxt);
       } else {
         String msg =
