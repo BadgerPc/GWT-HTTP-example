@@ -15,8 +15,6 @@ import com.google.gwt.user.client.Window;
 public class DataTransfer {
 
   private static final String ERR_MSG = "An error occurred: ";
-  private static TestTemplate tester;
-  private static String url;
 
   /**
    * Performs a GET operation with the given URL.
@@ -25,10 +23,7 @@ public class DataTransfer {
    * @param url the URL to GET data from
    */
   @SuppressWarnings("unused")
-  public static void get(final TestTemplate tester, final String url) {
-
-    DataTransfer.tester = tester;
-    DataTransfer.url = url;
+  public static void get(TestTemplate tester, String url) {
 
     RequestBuilder builder =
         new RequestBuilder(RequestBuilder.GET, URL.encode(url));
@@ -36,7 +31,7 @@ public class DataTransfer {
 
     try {
       Request request =
-          builder.sendRequest(null, new ModelRequestCallback());
+          builder.sendRequest(null, new ModelRequestCallback(tester, url));
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
@@ -49,7 +44,7 @@ public class DataTransfer {
    * @param url the URL to POST data to
    */
   @SuppressWarnings("unused")
-  public static void post(final TestTemplate tester, final String url) {
+  public static void post(TestTemplate tester, String url) {
 
     RequestBuilder builder =
         new RequestBuilder(RequestBuilder.POST, URL.encode(url));
@@ -62,7 +57,8 @@ public class DataTransfer {
       builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
       // builder.setHeader("Content-Type", "application/json");
       Request request =
-          builder.sendRequest(queryString, new ModelRequestCallback());
+          builder.sendRequest(queryString,
+              new ModelRequestCallback(tester, url));
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
@@ -98,17 +94,24 @@ public class DataTransfer {
   }
 
   /**
-   * A RequestCallback handler class that provides the callback for a GET or
-   * POST request of a model.
+   * A RequestCallback handler class that provides the callback for a GET or POST
+   * request of a model.
    */
   public static class ModelRequestCallback implements RequestCallback {
+
+    private TestTemplate tester;
+    private String url;
+    
+    public ModelRequestCallback(TestTemplate tester, String url) {
+      this.tester = tester;
+      this.url = url;
+    }
 
     @Override
     public void onResponseReceived(Request request, Response response) {
       if (Response.SC_OK == response.getStatusCode()) {
         String rtxt = response.getText();
         tester.setResponse(rtxt);
-        Window.alert(rtxt);
       } else {
         String msg =
             "The URL '" + url + "' did not give an 'OK' response. "
