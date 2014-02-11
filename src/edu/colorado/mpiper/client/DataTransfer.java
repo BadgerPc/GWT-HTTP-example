@@ -15,6 +15,8 @@ import com.google.gwt.user.client.Window;
 public class DataTransfer {
 
   private static final String ERR_MSG = "An error occurred: ";
+  private static TestTemplate tester;
+  private static String url;
 
   /**
    * Performs a GET operation with the given URL.
@@ -25,32 +27,16 @@ public class DataTransfer {
   @SuppressWarnings("unused")
   public static void get(final TestTemplate tester, final String url) {
 
+    DataTransfer.tester = tester;
+    DataTransfer.url = url;
+
     RequestBuilder builder =
         new RequestBuilder(RequestBuilder.GET, URL.encode(url));
     GWT.log(url);
 
     try {
-      Request request = builder.sendRequest(null, new RequestCallback() {
-
-        @Override
-        public void onResponseReceived(Request request, Response response) {
-          if (Response.SC_OK == response.getStatusCode()) {
-            String rtxt = response.getText();
-            tester.setResponse(rtxt);
-          } else {
-            String msg =
-                "The URL '" + url + "' did not give an 'OK' response. "
-                    + "Response code: " + response.getStatusCode();
-            Window.alert(msg);
-          }
-        }
-
-        @Override
-        public void onError(Request request, Throwable exception) {
-          Window.alert(ERR_MSG + exception.getMessage());
-        }
-      });
-
+      Request request =
+          builder.sendRequest(null, new GetModelRequestCallback());
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
@@ -74,31 +60,9 @@ public class DataTransfer {
 
     try {
       builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
-      //builder.setHeader("Content-Type", "application/json");
+      // builder.setHeader("Content-Type", "application/json");
       Request request =
-          builder.sendRequest(queryString, new RequestCallback() {
-
-            @Override
-            public void onResponseReceived(Request request, Response response) {
-
-              if (Response.SC_OK == response.getStatusCode()) {
-                String rtxt = response.getText();
-                // tester.setResponse(rtxt);
-                Window.alert(rtxt);
-              } else {
-                String msg =
-                    "The URL '" + url + "' did not give an 'OK' response. "
-                        + "Response code: " + response.getStatusCode();
-                Window.alert(msg);
-              }
-            }
-
-            @Override
-            public void onError(Request request, Throwable exception) {
-              Window.alert(ERR_MSG + exception.getMessage());
-            }
-          });
-
+          builder.sendRequest(queryString, new PostModelRequestCallback());
     } catch (RequestException e) {
       Window.alert(ERR_MSG + e.getMessage());
     }
@@ -132,38 +96,53 @@ public class DataTransfer {
 
     return sb.toString();
   }
-  
-  
-  /**
-   * A JSNI method for creating a String from a JavaScriptObject.
-   * 
-   * @see http://stackoverflow.com/questions/4872770/excluding-gwt-objectid-from-json-stringifyjso-in-devmode
-   * @param jso a JavaScriptObject
-   * @return a String representation of the JavaScriptObject
-   */
-  private final native static <T> String stringify(T jso) /*-{
-		return JSON.stringify(jso, function(key, value) {
-			if (key == '__gwt_ObjectId') {
-				return;
-			}
-			return value;
-		});
-  }-*/;
 
   /**
-   * A JSNI method for evaluating JSONs.
-   * 
-   * Note that this is a generic method. It returns a JavaScript object of the
-   * type denoted by the type parameter T.
-   * 
-   * @see <a
-   *      href="http://docs.oracle.com/javase/tutorial/extra/generics/methods.html">Generic
-   *      Methods</a>
-   * 
-   * @param jsonStr a String that you trust
-   * @return a JavaScriptObject that you can cast to an overlay type
+   * Provides the callback for a GET request of a model.
    */
-  private final native static <T> T parse(String jsonStr) /*-{
-		return eval("(" + jsonStr + ")");
-  }-*/;
+  public static class GetModelRequestCallback implements RequestCallback {
+
+    @Override
+    public void onResponseReceived(Request request, Response response) {
+      if (Response.SC_OK == response.getStatusCode()) {
+        String rtxt = response.getText();
+        tester.setResponse(rtxt);
+      } else {
+        String msg =
+            "The URL '" + url + "' did not give an 'OK' response. "
+                + "Response code: " + response.getStatusCode();
+        Window.alert(msg);
+      }
+    }
+
+    @Override
+    public void onError(Request request, Throwable exception) {
+      Window.alert(ERR_MSG + exception.getMessage());
+    }
+  }
+
+  /**
+   * Provides the callback for a POST request of a model.
+   */
+  public static class PostModelRequestCallback implements RequestCallback {
+
+    @Override
+    public void onResponseReceived(Request request, Response response) {
+      if (Response.SC_OK == response.getStatusCode()) {
+        String rtxt = response.getText();
+        // tester.setResponse(rtxt);
+        Window.alert(rtxt);
+      } else {
+        String msg =
+            "The URL '" + url + "' did not give an 'OK' response. "
+                + "Response code: " + response.getStatusCode();
+        Window.alert(msg);
+      }
+    }
+
+    @Override
+    public void onError(Request request, Throwable exception) {
+      Window.alert(ERR_MSG + exception.getMessage());
+    }
+  }
 }
