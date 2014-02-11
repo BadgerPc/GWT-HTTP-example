@@ -14,14 +14,15 @@ import com.google.gwt.user.client.Window;
 
 public class DataTransfer {
 
-  private static final String CXN_MSG = "Couldn't connect to server";
+  private static final String ERR_MSG = "An error occurred: ";
 
   /**
    * Performs a GET operation with the given URL.
    * 
-   * @param tester
-   * @param url
+   * @param tester an instance of TestTemplate representing the current test
+   * @param url the URL to GET data from
    */
+  @SuppressWarnings("unused")
   public static void get(final TestTemplate tester, final String url) {
 
     RequestBuilder builder =
@@ -29,7 +30,6 @@ public class DataTransfer {
     GWT.log(url);
 
     try {
-      @SuppressWarnings("unused")
       Request request = builder.sendRequest(null, new RequestCallback() {
 
         @Override
@@ -39,7 +39,7 @@ public class DataTransfer {
             tester.setResponse(rtxt);
           } else {
             String msg =
-                "The URL '" + url + "' cannot be accessed. "
+                "The URL '" + url + "' did not give an 'OK' response. "
                     + "Response code: " + response.getStatusCode();
             Window.alert(msg);
           }
@@ -47,20 +47,20 @@ public class DataTransfer {
 
         @Override
         public void onError(Request request, Throwable exception) {
-          Window.alert(CXN_MSG);
+          Window.alert(ERR_MSG + exception.getMessage());
         }
       });
 
     } catch (RequestException e) {
-      Window.alert("Failed to send the request: " + e.getMessage());
+      Window.alert(ERR_MSG + e.getMessage());
     }
   }
 
   /**
    * Performs a POST operation with the given URL.
    * 
-   * @param tester
-   * @param url
+   * @param tester an instance of TestTemplate representing the current test
+   * @param url the URL to POST data to
    */
   @SuppressWarnings("unused")
   public static void post(final TestTemplate tester, final String url) {
@@ -87,7 +87,7 @@ public class DataTransfer {
                 Window.alert(rtxt);
               } else {
                 String msg =
-                    "The URL '" + url + "' cannot be accessed. "
+                    "The URL '" + url + "' did not give an 'OK' response. "
                         + "Response code: " + response.getStatusCode();
                 Window.alert(msg);
               }
@@ -95,12 +95,12 @@ public class DataTransfer {
 
             @Override
             public void onError(Request request, Throwable exception) {
-              Window.alert(CXN_MSG);
+              Window.alert(ERR_MSG + exception.getMessage());
             }
           });
 
     } catch (RequestException e) {
-      Window.alert("Failed to send the request: " + e.getMessage());
+      Window.alert(ERR_MSG + e.getMessage());
     }
   }
 
