@@ -16,7 +16,7 @@ public class TestPostModelRiver extends TestTemplate {
     modelName = "GWT POST Test";
     modelJSON = "{\"model\":" + r.toString() + "}";
     
-    String url = "http://csdms.colorado.edu/wmt/models/new";
+    String url = "https://csdms.colorado.edu/wmt/api-dev/models/new";
     DataTransfer.post(this, url);
 
     header.setHTML(header.getHTML() + "POST model to river");

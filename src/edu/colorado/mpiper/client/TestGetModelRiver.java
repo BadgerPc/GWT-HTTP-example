@@ -14,7 +14,7 @@ public class TestGetModelRiver extends TestTemplate {
     // Models are accessed by index -- here, 18. Use "show" instead of "open"
     // to access model information because formatting.
     //String url = "http://csdms.colorado.edu/wmt/models/open/18";
-    String url = "http://csdms.colorado.edu/wmt/models/show/18";
+    String url = "https://csdms.colorado.edu/wmt/api-dev/models/show/18";
     DataTransfer.get(this, url);
 
     header.setHTML(header.getHTML() + "GET model from river");
