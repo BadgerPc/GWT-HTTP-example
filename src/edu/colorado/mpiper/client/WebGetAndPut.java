@@ -17,12 +17,13 @@ public class WebGetAndPut implements EntryPoint {
     VerticalPanel contents = new VerticalPanel();
     RootPanel.get().add(contents);
     
-    HTML title = new HTML("<h1>HTTP GET and PUT practice</h1>");
+    HTML title = new HTML("<h1>HTTP GET and PUT Examples</h1>");
     contents.add(title);
     
     // The tests.
-    //contents.add(new TestLocalhost());
-    contents.add(new TestGetModelRiver());  
-    contents.add(new TestPostModelRiver());
+    contents.add(new TestGetModelDevMode());
+//    contents.add(new TestLocalhost());
+//    contents.add(new TestGetModelRiver());
+//    contents.add(new TestPostModelRiver());
   }
 }
